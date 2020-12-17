@@ -8,13 +8,9 @@ function factorial(n) {
     return 1;
   }
 
-  let factorial = 0;
+  let factorial = 1;
   while (n) {
-    if (!factorial) {
-      factorial = n;
-    } else {
-      factorial = factorial * n;
-    }
+    factorial = factorial * n;
     --n;
   }
   return factorial;
