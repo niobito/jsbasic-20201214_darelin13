@@ -4,5 +4,5 @@
  * @returns {Boolean}
  */
 function isEmpty(obj) {
-  // ваш код...
+  return Object.getOwnPropertyNames(obj).length === 0;
 }
