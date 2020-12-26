@@ -3,8 +3,8 @@
  * @returns {string}
  */
 function camelize(str) {
-  const arr = str.split('-').map((item, index) => {
-    return index ? `${item[0].toUpperCase()}${item.slice(1)}` : item;
-  });
-  return arr.join('');
+  return str
+    .split('-')
+    .map((item, index) => index ? `${item[0].toUpperCase()}${item.slice(1)}` : item)
+    .join('');
 }
