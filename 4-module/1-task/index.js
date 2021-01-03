@@ -1,22 +1,35 @@
 /**
+ * Генерация полного имени
+ * @param {string} firstName
+ * @param {string} lastName
+ * @returns {string}
+ */
+function getFullName({ firstName, lastName }) {
+  return `${firstName} ${lastName}`;
+}
+
+/**
+ * Возвращает элемент списка
+ * @param {Object} friend
+ * @returns {HTMLLIElement}
+ */
+function createFriendElement(friend) {
+  const li = document.createElement('li');
+  li.append(getFullName(friend));
+  return li;
+}
+
+/**
  * Генерация HTML списка друзей
  * @param {Object[]} friends
  * @return {HTMLUListElement}
  */
 function makeFriendsList(friends) {
-  function getFullName({ firstName, lastName }) {
-    return `${firstName} ${lastName}`;
-  }
-
   const ul = document.createElement('ul');
-  let list = new DocumentFragment();
 
-  for (let i = 0; i < friends.length; ++i) {
-    const li = document.createElement('li');
-    li.append(getFullName(friends[i]));
-    list.append(li);
-  }
+  friends.forEach(friend => {
+    ul.append(createFriendElement(friend));
+  });
 
-  ul.append(list);
   return ul;
 }

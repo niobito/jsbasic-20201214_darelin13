@@ -7,14 +7,19 @@ function highlight(table) {
   rows.forEach(item => {
     const cell = item.querySelectorAll('td');
 
-    if (cell[3].dataset.available === undefined) {
-      item.setAttribute('hidden', 'true');
+    if (cell[3].dataset.available === 'true') {
+      item.classList.add('available');
+    } else if (cell[3].dataset.available === 'false') {
+      item.classList.add('unavailable');
     } else {
-      cell[3].dataset.available === 'true' ? item.classList.add('available') : item.classList.add('unavailable');
+      item.setAttribute('hidden', 'true');
     }
 
-    cell[2].textContent === 'm' ?
-      item.classList.add('male') : item.classList.add('female');
+    if (cell[2].textContent === 'm') {
+      item.classList.add('male');
+    } else {
+      item.classList.add('female');
+    }
 
     if (Number(cell[1].textContent) < 18) {
       item.style.textDecoration = 'line-through';
