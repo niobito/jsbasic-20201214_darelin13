@@ -1,5 +1,38 @@
 import createElement from '../../assets/lib/create-element.js';
 
+function slideTemplate({ image, price, name, id}) {
+  return `<div class="carousel__slide" data-id="${id}">
+            <img src="/assets/images/carousel/${image}" class="carousel__img" alt="slide">
+            <div class="carousel__caption">
+                <span class="carousel__price">€${price}</span>
+                <div class="carousel__title">${name}</div>
+                <button type="button" class="carousel__button">
+                    <img src="/assets/images/icons/plus-icon.svg" alt="icon">
+                </button>
+            </div>
+  </div>`;
+}
+
+function carouselTemplate(slides) {
+  return `<div class="carousel">
+            <div class="carousel__arrow carousel__arrow_right">
+                <img src="/assets/images/icons/angle-icon.svg" alt="icon">
+            </div>
+            <div class="carousel__arrow carousel__arrow_left">
+                <img src="/assets/images/icons/angle-left-icon.svg" alt="icon">
+            </div>
+
+            <div class="carousel__inner">
+            ${slides.map(slide => slideTemplate(slide)).join('')}
+  </div>>`;
+}
+
+function createCarousel(slides) {
+  const div = document.createElement('div');
+  div.innerHTML = carouselTemplate(slides);
+  return div.firstElementChild;
+}
+
 export default class Carousel {
   constructor(slides) {
     this.slides = slides;
@@ -12,96 +45,53 @@ export default class Carousel {
     return this._container;
   }
 
-  _img({ image }) {
-    return `<img src="/assets/images/carousel/${image}" class="carousel__img" alt="slide">`;
+  get _buttonRight() {
+    return this._container.querySelector('.carousel__arrow_right');
   }
 
-  _caption(slide) {
-    const caption = document.createElement('div');
-    caption.classList.add('carousel__caption');
-    caption.insertAdjacentHTML('beforeend', this._price(slide));
-    caption.insertAdjacentHTML('beforeend', this._title(slide));
-    caption.insertAdjacentHTML('beforeend', this._button());
-    return caption;
+  get _buttonLeft() {
+    return this._container.querySelector('.carousel__arrow_left');
   }
 
-  _price({ price }) {
-    return `<span class="carousel__price">€${price}</span>`;
+  get _pictureValue() {
+    return this._container.querySelectorAll('.carousel__slide').length;
   }
 
-  _title({ name }) {
-    return `<div class="carousel__title">${name}</div>`;
-  }
-
-  _button() {
-    return `<button type="button" class="carousel__button">
-      <img src="/assets/images/icons/plus-icon.svg" alt="icon">
-    </button>`;
-  }
-
-  _template(slide) {
-    const carouselSlide = document.createElement('div');
-    carouselSlide.classList.add('carousel__slide');
-    carouselSlide.insertAdjacentHTML('beforeend', this._img(slide));
-    carouselSlide.append(this._caption(slide));
-    carouselSlide.dataset.id = slide.id;
-    return carouselSlide;
-  }
-
-  get _inner() {
-    const inner = document.createElement('div');
-    inner.classList.add('carousel__inner');
-    const slides = this.slides.map(slide => this._template(slide));
-    slides.forEach(slide => inner.insertAdjacentElement('beforeend', slide));
-    return inner;
-  }
-
-  get _arrowsButton() {
-    return `<div class="carousel__arrow carousel__arrow_right">
-      <img src="/assets/images/icons/angle-icon.svg" alt="icon">
-    </div>
-    <div class="carousel__arrow carousel__arrow_left">
-      <img src="/assets/images/icons/angle-left-icon.svg" alt="icon">
-    </div>`;
+  get _carouselInner() {
+    return this._container.querySelector('.carousel__inner');
   }
 
   _addArrowButtonListener() {
-    const buttonRight = this._container.querySelector('.carousel__arrow_right');
-    const buttonLeft = this._container.querySelector('.carousel__arrow_left');
-    const pictureValue = this._container.querySelectorAll('.carousel__slide').length;
-    const carouselInner = this._container.querySelector('.carousel__inner');
     let pictureCounter = 0;
 
-    function hideButton(pictureCounter) {
-      pictureCounter === 0 ? buttonLeft.style.display = 'none' : buttonLeft.style.display = '';
-      pictureCounter === pictureValue - 1 ? buttonRight.style.display = 'none' : buttonRight.style.display = '';
-    }
+    this._hideButton(pictureCounter);
 
-    function translateValue(pictureCounter, offset) {
-      return `translateX(-${offset * pictureCounter}px)`;
-    }
-
-    hideButton(pictureCounter);
-
-    buttonRight.addEventListener('click', () => {
+    this._buttonRight.addEventListener('click', () => {
       ++pictureCounter;
       const offset = this._offset;
-      carouselInner.style.transform = translateValue(pictureCounter, offset);
-      hideButton(pictureCounter);
+      this._carouselInner.style.transform = this._translateValue(pictureCounter, offset);
+      this._hideButton(pictureCounter);
     });
 
-    buttonLeft.addEventListener('click', () => {
+    this._buttonLeft.addEventListener('click', () => {
       --pictureCounter;
       const offset = this._offset;
-      carouselInner.style.transform = translateValue(pictureCounter, offset);
-      hideButton(pictureCounter);
+      this._carouselInner.style.transform = this._translateValue(pictureCounter, offset);
+      this._hideButton(pictureCounter);
     });
   }
 
   get _offset() {
-    const carouselInner = this._container.querySelector('.carousel__inner');
-    const carouselWidth = carouselInner.offsetWidth;
-    return carouselWidth;
+    return this._carouselInner.offsetWidth;
+  }
+
+  _translateValue(pictureCounter, offset) {
+    return `translateX(-${offset * pictureCounter}px)`;
+  }
+
+  _hideButton(pictureCounter) {
+    pictureCounter === 0 ? this._buttonLeft.style.display = 'none' : this._buttonLeft.style.display = '';
+    pictureCounter === this._pictureValue - 1 ? this._buttonRight.style.display = 'none' : this._buttonRight.style.display = '';
   }
 
   _addButtonEventListener(slides) {
@@ -120,10 +110,7 @@ export default class Carousel {
   }
 
   _render() {
-    this._container = document.createElement('div');
-    this._container.classList.add('carousel');
-    this._container.insertAdjacentHTML('beforeend', this._arrowsButton);
-    this._container.insertAdjacentElement('beforeend', this._inner);
+    this._container = createCarousel(this.slides);
     this._addArrowButtonListener();
     this._addButtonEventListener(this.slides);
   }
