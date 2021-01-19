@@ -33,7 +33,7 @@ export default class ProductCard {
     return this._container;
   }
 
-  _productAdd() {
+  _productAdd =() => {
     const event = new CustomEvent(
       "product-add",
       {
