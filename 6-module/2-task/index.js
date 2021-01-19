@@ -33,19 +33,21 @@ export default class ProductCard {
     return this._container;
   }
 
+  _productAdd() {
+    const event = new CustomEvent(
+      "product-add",
+      {
+        detail: this.product.id,
+        bubbles: true
+      }
+    );
+
+    this._container.dispatchEvent(event);
+  }
+
   _render() {
     this._container = createCard(this.product);
 
-    this._container.querySelector('button').addEventListener('click', () => {
-      const event = new CustomEvent(
-        "product-add",
-        {
-          detail: this.product.id,
-          bubbles: true
-        }
-      );
-
-      this._container.dispatchEvent(event);
-    });
+    this._container.querySelector('button').addEventListener('click', this._productAdd);
   }
 }

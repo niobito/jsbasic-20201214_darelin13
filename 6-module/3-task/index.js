@@ -37,6 +37,7 @@ export default class Carousel {
   constructor(slides) {
     this.slides = slides;
     this._container = null;
+    this._pictureCounter = 0;
 
     this._render();
   }
@@ -62,23 +63,24 @@ export default class Carousel {
   }
 
   _addArrowButtonListener() {
-    let pictureCounter = 0;
+    this._hideButton(this._pictureCounter);
 
-    this._hideButton(pictureCounter);
+    this._buttonRight.addEventListener('click', this._nextSlide);
+    this._buttonLeft.addEventListener('click', this._prevSlide);
+  }
 
-    this._buttonRight.addEventListener('click', () => {
-      ++pictureCounter;
-      const offset = this._offset;
-      this._carouselInner.style.transform = this._translateValue(pictureCounter, offset);
-      this._hideButton(pictureCounter);
-    });
+  _nextSlide = () => {
+    ++this._pictureCounter;
+    const offset = this._offset;
+    this._carouselInner.style.transform = this._translateValue(this._pictureCounter, offset);
+    this._hideButton(this._pictureCounter);
+  }
 
-    this._buttonLeft.addEventListener('click', () => {
-      --pictureCounter;
-      const offset = this._offset;
-      this._carouselInner.style.transform = this._translateValue(pictureCounter, offset);
-      this._hideButton(pictureCounter);
-    });
+  _prevSlide = () => {
+    --this._pictureCounter;
+    const offset = this._offset;
+    this._carouselInner.style.transform = this._translateValue(this._pictureCounter, offset);
+    this._hideButton(this._pictureCounter);
   }
 
   get _offset() {
